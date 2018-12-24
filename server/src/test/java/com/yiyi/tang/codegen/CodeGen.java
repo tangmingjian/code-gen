@@ -11,16 +11,13 @@ import java.io.File;
 import java.io.FileWriter;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
-import static com.yiyi.tang.codegen.CodeGenConstants.*;
-
 /**
  * @author tangmingjian 2018-12-22 下午1:09
  **/
 public class CodeGen {
 
-    public static final String DATE = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-    public static final String AUTHOR = "Tangmingjian";
+    private static final String DATE = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+    private static final String AUTHOR = "Tangmingjian";
     /********************数据库信息********************/
     private static final String JDBC_URL = "jdbc:mysql://localhost:3306/test";
     private static final String JDBC_USERNAME = "root";
@@ -65,13 +62,24 @@ public class CodeGen {
     private static final String TEMPLATE_FILE_PATH = PROJECT_PATH + "/server/src/test/resources/generator/templates";
     /********************项目模版路径********************/
 
+    private static final String BASE_PACKAGE = "com.yiyi.tang";
+    private static final String MODEL_PACKAGE = BASE_PACKAGE + ".model";
+    private static final String MAPPER_PACKAGE = BASE_PACKAGE + ".mapper";
+    private static final String SERVICE_PACKAGE = BASE_PACKAGE + ".services";
+    private static final String SERVICE_IMPL_PACKAGE = SERVICE_PACKAGE + ".impl";
+    private static final String CONTROLLER_PACKAGE = BASE_PACKAGE + ".api";
+    private static final String CONTROLLER_IMPL_PACKAGE = CONTROLLER_PACKAGE + ".impl";
+    private static final String DTO_PACKAGE = BASE_PACKAGE+".dto";
+    private static final String RESPONSE_PACKAGE = BASE_PACKAGE+".response";
+    private static final String MAPPER_INTERFACE_REFERENCE = BASE_PACKAGE + ".base.Mapper";//Mapper插件基础接口的完全限定名
+
 
     public static void main(String[] args) {
-        List<TableToModel> list = new ArrayList() {{
+        new ArrayList<TableToModel>() {{
             add(TableToModel.builder().tableName("t_user").modelName("User").idType("String").build());
-        }};
-
-        list.stream()
+            //add other tables
+        }}
+        .stream()
                 .map(CodeGen::setDefaultModelName)
                 .forEach(CodeGen::genCode);
     }
@@ -147,11 +155,11 @@ public class CodeGen {
             generator.generate(null);
 
         } catch (Exception e) {
-            throw new RuntimeException("生成Model和Mapper失败", e);
+            throw new RuntimeException("gen Model and Mapper failed", e);
         }
-        System.out.println(tableToModel.getModelName() + ".java 生成成功");
-        System.out.println(tableToModel.getModelName() + "Mapper.java 生成成功");
-        System.out.println(tableToModel.getModelName() + "Mapper.xml 生成成功");
+        System.out.println(tableToModel.getModelName() + ".java gen successful");
+        System.out.println(tableToModel.getModelName() + "Mapper.java gen successful");
+        System.out.println(tableToModel.getModelName() + "Mapper.xml gen successful");
         System.out.println(String.format("gen table %S dao code end", tableToModel.getTableName()));
     }
 
@@ -174,7 +182,7 @@ public class CodeGen {
                 service.getParentFile().mkdirs();
             }
             configuration.getTemplate("Service.ftl").process(data, new FileWriter(service));
-            System.out.println(tableToModel.getModelName() + "Service.java 生成成功");
+            System.out.println(tableToModel.getModelName() + "Service.java gen successful");
 
 
 
@@ -183,7 +191,7 @@ public class CodeGen {
                 serviceImpl.getParentFile().mkdirs();
             }
             configuration.getTemplate("ServiceImpl.ftl").process(data, new FileWriter(serviceImpl));
-            System.out.println(tableToModel.getModelName() + "ServiceImpl.java 生成成功");
+            System.out.println(tableToModel.getModelName() + "ServiceImpl.java gen successful");
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -220,7 +228,7 @@ public class CodeGen {
                 server.getParentFile().mkdirs();
             }
             configuration.getTemplate("ControllerImpl.ftl").process(data, new FileWriter(server));
-            System.out.println(tableToModel.getModelName() + "ControllerImpl.java 生成成功");
+            System.out.println(tableToModel.getModelName() + "ControllerImpl.java gen successful");
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -245,7 +253,7 @@ public class CodeGen {
                 api.getParentFile().mkdirs();
             }
             configuration.getTemplate("Controller.ftl").process(data, new FileWriter(api));
-            System.out.println(tableToModel.getModelName() + "Controller.java 生成成功");
+            System.out.println(tableToModel.getModelName() + "Controller.java gen successful");
         } catch (Exception e) {
             System.out.println(e);
         }
