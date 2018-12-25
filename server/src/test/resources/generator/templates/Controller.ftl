@@ -21,7 +21,7 @@ public interface ${modelNameUpperCamel}Controller {
 
     @DeleteMapping("/{id}")
     @ApiOperation(value = "Delete ${modelNameLowerCamel}")
-    ResData<Boolean> delete(@PathVariable("id") String id);
+    ResData<Boolean> delete(@PathVariable("id") ${idType} id);
 
     @PutMapping
     @ApiOperation(value = "Modify ${modelNameLowerCamel}")
@@ -29,7 +29,7 @@ public interface ${modelNameUpperCamel}Controller {
 
     @GetMapping("/{id}")
     @ApiOperation(value = "Get ${modelNameLowerCamel}")
-    ResData<${modelNameUpperCamel}Dto> find(@PathVariable("id") String id);
+    ResData<${modelNameUpperCamel}Dto> find(@PathVariable("id") ${idType} id);
 
     @GetMapping("all")
     @ApiOperation(value = "Get all ${modelNameLowerCamel}s pageable")

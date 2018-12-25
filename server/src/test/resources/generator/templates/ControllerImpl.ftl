@@ -34,26 +34,26 @@ public class ${modelNameUpperCamel}ControllerImpl implements ${modelNameUpperCam
     @SuppressWarnings("unchecked")
     @Override
     public ResData<Boolean> save(${modelNameUpperCamel}Dto ${modelNameLowerCamel}Dto) {
-        return ResDataBuilder.ok(${modelNameLowerCamel}Service.save(${modelNameLowerCamel}Dto));
+        return ResDataBuilder.ok(${modelNameLowerCamel}Service.save(convert2${modelNameUpperCamel}(${modelNameLowerCamel}Dto)));
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public ResData<Boolean> delete(String id) {
+    public ResData<Boolean> delete(${idType} id) {
         return ResDataBuilder.ok(${modelNameLowerCamel}Service.deleteById(id));
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public ResData<Boolean> update(${modelNameUpperCamel}Dto ${modelNameLowerCamel}Dto) {
-        return ResDataBuilder.ok(${modelNameLowerCamel}Service.update(${modelNameLowerCamel}Dto));
+        return ResDataBuilder.ok(${modelNameLowerCamel}Service.update(convert2${modelNameUpperCamel}(${modelNameLowerCamel}Dto)));
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public ResData<${modelNameUpperCamel}Dto> find(String id) {
+    public ResData<${modelNameUpperCamel}Dto> find(${idType} id) {
         ${modelNameUpperCamel} ${modelNameLowerCamel} = (${modelNameUpperCamel}) ${modelNameLowerCamel}Service.findById(id);
-        return ResDataBuilder.ok(convert2${modelNameUpperCamel}(${modelNameLowerCamel}));
+        return ResDataBuilder.ok(convert2${modelNameUpperCamel}Dto(${modelNameLowerCamel}));
     }
 
     @SuppressWarnings("unchecked")
@@ -65,12 +65,12 @@ public class ${modelNameUpperCamel}ControllerImpl implements ${modelNameUpperCam
             return PageableResDataBuilder.ok(null, currPage, size, 0);
         } else {
             int totalCount = ${modelNameLowerCamel}Service.count(new ${modelNameUpperCamel}());
-            List<${modelNameUpperCamel}Dto> ${modelNameLowerCamel}Dtos = all.stream().map(this::convert2${modelNameUpperCamel}).collect(Collectors.toList());
+            List<${modelNameUpperCamel}Dto> ${modelNameLowerCamel}Dtos = all.stream().map(this::convert2${modelNameUpperCamel}Dto).collect(Collectors.toList());
             return PageableResDataBuilder.ok(${modelNameLowerCamel}Dtos, currPage, size, totalCount);
         }
     }
 
-    private ${modelNameUpperCamel}Dto convert2${modelNameUpperCamel}(${modelNameUpperCamel} ${modelNameLowerCamel}) {
+    private ${modelNameUpperCamel}Dto convert2${modelNameUpperCamel}Dto(${modelNameUpperCamel} ${modelNameLowerCamel}) {
         if (${modelNameLowerCamel} == null) {
             return null;
         }
@@ -78,4 +78,14 @@ public class ${modelNameUpperCamel}ControllerImpl implements ${modelNameUpperCam
         BeanUtils.copyProperties(${modelNameLowerCamel}, ${modelNameLowerCamel}Dto);
         return ${modelNameLowerCamel}Dto;
     }
+
+    private ${modelNameUpperCamel} convert2${modelNameUpperCamel}(${modelNameUpperCamel}Dto ${modelNameLowerCamel}Dto) {
+        if (${modelNameLowerCamel}Dto == null) {
+            return null;
+        }
+        ${modelNameUpperCamel} ${modelNameLowerCamel} = new ${modelNameUpperCamel}();
+        BeanUtils.copyProperties(${modelNameLowerCamel}Dto, ${modelNameLowerCamel});
+        return ${modelNameLowerCamel};
+    }
+
 }

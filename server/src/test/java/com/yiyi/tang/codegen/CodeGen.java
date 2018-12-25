@@ -20,10 +20,10 @@ public class CodeGen {
     private static final String DATE = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
     private static final String AUTHOR = "Tangmingjian";
     /********************数据库信息********************/
-    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/test?nullCatalogMeansCurrent=true";
-    private static final String JDBC_USERNAME = "root";
-    private static final String JDBC_PASSWORD = "root";
-    private static final String JDBC_DIVER_CLASS_NAME = "com.mysql.jdbc.Driver";
+    private static final String JDBC_URL = "jdbc:oracle:thin:@10.103.21.17:1521:zggpayptest";
+    private static final String JDBC_USERNAME = "gpay";
+    private static final String JDBC_PASSWORD = "gpay_1234";
+    private static final String JDBC_DIVER_CLASS_NAME = "oracle.jdbc.OracleDriver";
     /********************数据库信息********************/
 
     /********************项目路径********************/
@@ -77,7 +77,7 @@ public class CodeGen {
 
     public static void main(String[] args) {
         new ArrayList<TableToModel>() {{
-            add(TableToModel.builder().tableName("t_user").modelName("User").idType("String").build());
+            add(TableToModel.builder().tableName("td_auth_order").modelName("AuthOrder").idType("Integer").build());
             //add other tables
         }}
                 .stream()
@@ -229,6 +229,7 @@ public class CodeGen {
             data.put("apiPackage", CONTROLLER_PACKAGE);
             data.put("dtoPackage", DTO_PACKAGE);
             data.put("responsePackage", RESPONSE_PACKAGE);
+            data.put("idType",tableToModel.getIdType());
 
             File server = new File(SERVER_MODULE_PATH + JAVA_PATH + package2Path(CONTROLLER_IMPL_PACKAGE) + tableToModel.getModelName() + "ControllerImpl.java");
             if (!server.getParentFile().exists()) {
@@ -254,6 +255,7 @@ public class CodeGen {
             data.put("basePackage", CONTROLLER_PACKAGE);
             data.put("dtoPackage", DTO_PACKAGE);
             data.put("responsePackage", RESPONSE_PACKAGE);
+            data.put("idType",tableToModel.getIdType());
 
             File api = new File(API_MODULE_PATH + JAVA_PATH + package2Path(CONTROLLER_PACKAGE) + tableToModel.getModelName() + "Controller.java");
             if (!api.getParentFile().exists()) {

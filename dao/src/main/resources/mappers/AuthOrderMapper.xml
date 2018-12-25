@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yiyi.tang.mappers.AuthOrderMapper">
+  <resultMap id="BaseResultMap" type="com.yiyi.tang.model.AuthOrder">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ID" jdbcType="DECIMAL" property="id" />
+    <result column="PARTNER_ID" jdbcType="VARCHAR" property="partnerId" />
+    <result column="MERCHANT_ORDER_NO" jdbcType="VARCHAR" property="merchantOrderNo" />
+    <result column="ORDER_NO" jdbcType="VARCHAR" property="orderNo" />
+    <result column="STATUS" jdbcType="DECIMAL" property="status" />
+    <result column="AUTH_CHANNEL" jdbcType="VARCHAR" property="authChannel" />
+    <result column="PAYEE_FEE" jdbcType="DECIMAL" property="payeeFee" />
+    <result column="PAYER_FEE" jdbcType="DECIMAL" property="payerFee" />
+    <result column="TYPE" jdbcType="CHAR" property="type" />
+    <result column="MSG" jdbcType="VARCHAR" property="msg" />
+    <result column="ELEMENTS" jdbcType="VARCHAR" property="elements" />
+    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+</mapper>
