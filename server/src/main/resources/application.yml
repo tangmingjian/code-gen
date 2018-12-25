@@ -3,6 +3,8 @@ server:
 spring:
   application:
     name: code-gen
+  profiles:
+    active: swagger2
   datasource:
     url: jdbc:mysql://localhost:3306/test
     driver-class-name: com.mysql.jdbc.Driver

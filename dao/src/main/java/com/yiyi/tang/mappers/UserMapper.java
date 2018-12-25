@@ -1,4 +1,4 @@
-package com.yiyi.tang.mapper;
+package com.yiyi.tang.mappers;
 
 import com.yiyi.tang.base.Mapper;
 import com.yiyi.tang.model.User;

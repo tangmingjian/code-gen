@@ -10,22 +10,22 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- *  @author Tangmingjian 2018-12-23 16:07:13
+ *  @author Tangmingjian 2018-12-25 15:49:32
  **/
 @Api("User apis")
 public interface UserController {
 
     @PostMapping
-    @ApiOperation(value = "Add userDto")
-    ResData<Boolean> save(UserDto userDto);
+    @ApiOperation(value = "Add user")
+    ResData<Boolean> save(@RequestBody UserDto userDto);
 
     @DeleteMapping("/{id}")
     @ApiOperation(value = "Delete user")
     ResData<Boolean> delete(@PathVariable("id") String id);
 
     @PutMapping
-    @ApiOperation(value = "Modify userDto")
-    ResData<Boolean> update(UserDto userDto);
+    @ApiOperation(value = "Modify user")
+    ResData<Boolean> update(@RequestBody UserDto userDto);
 
     @GetMapping("/{id}")
     @ApiOperation(value = "Get user")

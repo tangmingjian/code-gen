@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @author Tangmingjian 2018-12-23 16:07:13
+ * @author Tangmingjian 2018-12-25 15:07:20
  **/
 @RequestMapping("/user")
 @RestController
@@ -34,7 +34,7 @@ public class UserControllerImpl implements UserController {
     @SuppressWarnings("unchecked")
     @Override
     public ResData<Boolean> save(UserDto userDto) {
-        return ResDataBuilder.ok(userService.save(userDto));
+        return ResDataBuilder.ok(userService.save(convert2User(userDto)));
     }
 
     @SuppressWarnings("unchecked")
@@ -46,14 +46,14 @@ public class UserControllerImpl implements UserController {
     @SuppressWarnings("unchecked")
     @Override
     public ResData<Boolean> update(UserDto userDto) {
-        return ResDataBuilder.ok(userService.update(userDto));
+        return ResDataBuilder.ok(userService.update(convert2User(userDto)));
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public ResData<UserDto> find(String id) {
         User user = (User) userService.findById(id);
-        return ResDataBuilder.ok(convert2User(user));
+        return ResDataBuilder.ok(convert2UserDto(user));
     }
 
     @SuppressWarnings("unchecked")
@@ -65,14 +65,27 @@ public class UserControllerImpl implements UserController {
             return PageableResDataBuilder.ok(null, currPage, size, 0);
         } else {
             int totalCount = userService.count(new User());
-            List<UserDto> userDtos = all.stream().map(this::convert2User).collect(Collectors.toList());
+            List<UserDto> userDtos = all.stream().map(this::convert2UserDto).collect(Collectors.toList());
             return PageableResDataBuilder.ok(userDtos, currPage, size, totalCount);
         }
     }
 
-    private UserDto convert2User(User user) {
+    private UserDto convert2UserDto(User user) {
+        if (user == null) {
+            return null;
+        }
         UserDto userDto = new UserDto();
         BeanUtils.copyProperties(user, userDto);
         return userDto;
     }
+
+    private User convert2User(UserDto userDto) {
+        if (userDto == null) {
+            return null;
+        }
+        User user = new User();
+        BeanUtils.copyProperties(userDto, user);
+        return user;
+    }
+
 }

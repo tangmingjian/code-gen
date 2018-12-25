@@ -38,7 +38,7 @@ public class DBConfig {
 
         //添加XML目录
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-        factory.setMapperLocations(resolver.getResources("classpath:mapper/*.xml"));
+        factory.setMapperLocations(resolver.getResources("classpath:mappers/*.xml"));
         return factory.getObject();
     }
 

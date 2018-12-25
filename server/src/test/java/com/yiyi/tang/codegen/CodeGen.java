@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
 /**
  * @author tangmingjian 2018-12-22 下午1:09
  **/
@@ -19,7 +20,7 @@ public class CodeGen {
     private static final String DATE = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
     private static final String AUTHOR = "Tangmingjian";
     /********************数据库信息********************/
-    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/test";
+    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/test?nullCatalogMeansCurrent=true";
     private static final String JDBC_USERNAME = "root";
     private static final String JDBC_PASSWORD = "root";
     private static final String JDBC_DIVER_CLASS_NAME = "com.mysql.jdbc.Driver";
@@ -64,13 +65,13 @@ public class CodeGen {
 
     private static final String BASE_PACKAGE = "com.yiyi.tang";
     private static final String MODEL_PACKAGE = BASE_PACKAGE + ".model";
-    private static final String MAPPER_PACKAGE = BASE_PACKAGE + ".mapper";
+    private static final String MAPPER_PACKAGE = BASE_PACKAGE + ".mappers";
     private static final String SERVICE_PACKAGE = BASE_PACKAGE + ".services";
     private static final String SERVICE_IMPL_PACKAGE = SERVICE_PACKAGE + ".impl";
     private static final String CONTROLLER_PACKAGE = BASE_PACKAGE + ".api";
     private static final String CONTROLLER_IMPL_PACKAGE = CONTROLLER_PACKAGE + ".impl";
-    private static final String DTO_PACKAGE = BASE_PACKAGE+".dto";
-    private static final String RESPONSE_PACKAGE = BASE_PACKAGE+".response";
+    private static final String DTO_PACKAGE = BASE_PACKAGE + ".dto";
+    private static final String RESPONSE_PACKAGE = BASE_PACKAGE + ".response";
     private static final String MAPPER_INTERFACE_REFERENCE = BASE_PACKAGE + ".base.Mapper";//Mapper插件基础接口的完全限定名
 
 
@@ -79,12 +80,12 @@ public class CodeGen {
             add(TableToModel.builder().tableName("t_user").modelName("User").idType("String").build());
             //add other tables
         }}
-        .stream()
+                .stream()
                 .map(CodeGen::setDefaultModelName)
                 .forEach(CodeGen::genCode);
     }
 
-    private static TableToModel setDefaultModelName(TableToModel o){
+    private static TableToModel setDefaultModelName(TableToModel o) {
         if (StringUtils.isEmpty(o.getModelName())) {
             o.setModelName(tableName2ModelNameUpperCamel(o.getTableName()));
         }
@@ -118,6 +119,8 @@ public class CodeGen {
         PluginConfiguration pluginConfiguration = new PluginConfiguration();
         pluginConfiguration.setConfigurationType("tk.mybatis.mapper.generator.MapperPlugin");
         pluginConfiguration.addProperty("mappers", MAPPER_INTERFACE_REFERENCE);
+        pluginConfiguration.addProperty("lombok", "Getter,Setter,ToString");
+        pluginConfiguration.addProperty("useMapperCommentGenerator", "false");
         context.addPluginConfiguration(pluginConfiguration);
 
         JavaModelGeneratorConfiguration javaModelGeneratorConfiguration = new JavaModelGeneratorConfiguration();
@@ -127,7 +130,7 @@ public class CodeGen {
 
         SqlMapGeneratorConfiguration sqlMapGeneratorConfiguration = new SqlMapGeneratorConfiguration();
         sqlMapGeneratorConfiguration.setTargetProject(DAO_MODULE_PATH + RESOURCES_PATH);
-        sqlMapGeneratorConfiguration.setTargetPackage("mapper");
+        sqlMapGeneratorConfiguration.setTargetPackage("mappers");
         context.setSqlMapGeneratorConfiguration(sqlMapGeneratorConfiguration);
 
         JavaClientGeneratorConfiguration javaClientGeneratorConfiguration = new JavaClientGeneratorConfiguration();
@@ -139,8 +142,13 @@ public class CodeGen {
         TableConfiguration tableConfiguration = new TableConfiguration(context);
         tableConfiguration.setTableName(tableToModel.getTableName());
         tableConfiguration.setDomainObjectName(tableToModel.getModelName());
-        tableConfiguration.setGeneratedKey(new GeneratedKey("id", "Mysql", true, null));
+//        tableConfiguration.setGeneratedKey(new GeneratedKey("id", "select SEQ_{1}.nextval from dual", false, "pre"));
+        tableConfiguration.setGeneratedKey(new GeneratedKey("id", "Mysql", false, "pre"));
         context.addTableConfiguration(tableConfiguration);
+
+//        CommentGeneratorConfiguration commentGeneratorConfiguration = new CommentGeneratorConfiguration();
+//        commentGeneratorConfiguration.setConfigurationType("tk.mybatis.mapper.generator.MapperCommentGenerator");
+//        context.setCommentGeneratorConfiguration(commentGeneratorConfiguration);
 
         List<String> warnings;
         MyBatisGenerator generator;
@@ -153,7 +161,7 @@ public class CodeGen {
             warnings = new ArrayList<>();
             generator = new MyBatisGenerator(config, callback, warnings);
             generator.generate(null);
-
+            System.out.println(warnings);
         } catch (Exception e) {
             throw new RuntimeException("gen Model and Mapper failed", e);
         }
@@ -173,9 +181,9 @@ public class CodeGen {
             data.put("modelNameUpperCamel", tableToModel.getModelName());
             data.put("modelNameLowerCamel", tableName2ModelNameLowerCamel(tableToModel.getModelName()));
             data.put("basePackage", SERVICE_PACKAGE);
-            data.put("mapperPackage",MAPPER_PACKAGE);
-            data.put("modelPackage",MODEL_PACKAGE);
-            data.put("idType",tableToModel.getIdType());
+            data.put("mapperPackage", MAPPER_PACKAGE);
+            data.put("modelPackage", MODEL_PACKAGE);
+            data.put("idType", tableToModel.getIdType());
 
             File service = new File(SERVICE_MODULE_PATH + JAVA_PATH + package2Path(SERVICE_PACKAGE) + tableToModel.getModelName() + "Service.java");
             if (!service.getParentFile().exists()) {
@@ -183,7 +191,6 @@ public class CodeGen {
             }
             configuration.getTemplate("Service.ftl").process(data, new FileWriter(service));
             System.out.println(tableToModel.getModelName() + "Service.java gen successful");
-
 
 
             File serviceImpl = new File(SERVICE_MODULE_PATH + JAVA_PATH + package2Path(SERVICE_IMPL_PACKAGE) + tableToModel.getModelName() + "ServiceImpl.java");
@@ -217,11 +224,11 @@ public class CodeGen {
             data.put("modelNameUpperCamel", tableToModel.getModelName());
             data.put("modelNameLowerCamel", tableName2ModelNameLowerCamel(tableToModel.getModelName()));
             data.put("basePackage", CONTROLLER_IMPL_PACKAGE);
-            data.put("servicePackage",SERVICE_PACKAGE);
-            data.put("modelPackage",MODEL_PACKAGE);
-            data.put("apiPackage",CONTROLLER_PACKAGE);
-            data.put("dtoPackage",DTO_PACKAGE);
-            data.put("responsePackage",RESPONSE_PACKAGE);
+            data.put("servicePackage", SERVICE_PACKAGE);
+            data.put("modelPackage", MODEL_PACKAGE);
+            data.put("apiPackage", CONTROLLER_PACKAGE);
+            data.put("dtoPackage", DTO_PACKAGE);
+            data.put("responsePackage", RESPONSE_PACKAGE);
 
             File server = new File(SERVER_MODULE_PATH + JAVA_PATH + package2Path(CONTROLLER_IMPL_PACKAGE) + tableToModel.getModelName() + "ControllerImpl.java");
             if (!server.getParentFile().exists()) {
@@ -245,8 +252,8 @@ public class CodeGen {
             data.put("modelNameUpperCamel", tableToModel.getModelName());
             data.put("modelNameLowerCamel", tableName2ModelNameLowerCamel(tableToModel.getModelName()));
             data.put("basePackage", CONTROLLER_PACKAGE);
-            data.put("dtoPackage",DTO_PACKAGE);
-            data.put("responsePackage",RESPONSE_PACKAGE);
+            data.put("dtoPackage", DTO_PACKAGE);
+            data.put("responsePackage", RESPONSE_PACKAGE);
 
             File api = new File(API_MODULE_PATH + JAVA_PATH + package2Path(CONTROLLER_PACKAGE) + tableToModel.getModelName() + "Controller.java");
             if (!api.getParentFile().exists()) {
@@ -254,6 +261,14 @@ public class CodeGen {
             }
             configuration.getTemplate("Controller.ftl").process(data, new FileWriter(api));
             System.out.println(tableToModel.getModelName() + "Controller.java gen successful");
+
+
+            File dto = new File(API_MODULE_PATH + JAVA_PATH + package2Path(DTO_PACKAGE) + tableToModel.getModelName() + "Dto.java");
+            if (!dto.getParentFile().exists()) {
+                dto.getParentFile().mkdirs();
+            }
+            configuration.getTemplate("Dto.ftl").process(data, new FileWriter(dto));
+            System.out.println(tableToModel.getModelName() + "Dto.java gen successful");
         } catch (Exception e) {
             System.out.println(e);
         }

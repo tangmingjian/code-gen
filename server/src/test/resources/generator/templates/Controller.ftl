@@ -16,16 +16,16 @@ import java.util.List;
 public interface ${modelNameUpperCamel}Controller {
 
     @PostMapping
-    @ApiOperation(value = "Add ${modelNameLowerCamel}Dto")
-    ResData<Boolean> save(${modelNameUpperCamel}Dto ${modelNameLowerCamel}Dto);
+    @ApiOperation(value = "Add ${modelNameLowerCamel}")
+    ResData<Boolean> save(@RequestBody ${modelNameUpperCamel}Dto ${modelNameLowerCamel}Dto);
 
     @DeleteMapping("/{id}")
     @ApiOperation(value = "Delete ${modelNameLowerCamel}")
     ResData<Boolean> delete(@PathVariable("id") String id);
 
     @PutMapping
-    @ApiOperation(value = "Modify ${modelNameLowerCamel}Dto")
-    ResData<Boolean> update(${modelNameUpperCamel}Dto ${modelNameLowerCamel}Dto);
+    @ApiOperation(value = "Modify ${modelNameLowerCamel}")
+    ResData<Boolean> update(@RequestBody ${modelNameUpperCamel}Dto ${modelNameLowerCamel}Dto);
 
     @GetMapping("/{id}")
     @ApiOperation(value = "Get ${modelNameLowerCamel}")
